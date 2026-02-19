@@ -64,21 +64,27 @@ export default function PersonalStep({ onNext, data }) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div onClick={() => setAccountType('agent')} className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${accountType === 'agent' ? 'border-sky-400 bg-sky-50 shadow-sm' : 'border-slate-100'}`}>
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-4 text-sky-500 border border-slate-100"><User size={20} /></div>
-          <div><p className="font-bold text-slate-800 text-sm">Individual Agent</p></div>
+          <div><h1 className="font-bold text-slate-800 text-md">Individual Agent</h1>
+          <p className='text-sm text-gray-500'>I'm a solo real estate agent</p>
+          </div>
         </div>
 
         <div onClick={() => setAccountType('company')} className={`flex items-center p-4 border-2 rounded-xl cursor-pointer transition-all ${accountType === 'company' ? 'border-sky-400 bg-sky-50 shadow-sm' : 'border-slate-100'}`}>
           <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center mr-4 text-sky-500 border border-slate-100"><Building2 size={20} /></div>
-          <div><p className="font-bold text-slate-800 text-sm">Real Estate Company</p></div>
+          <div><h1 className="font-bold text-slate-800 text-base">Real Estate Company</h1>
+           <p className='text-sm text-gray-500'>I represent a company or team</p>
+          </div>
         </div>
       </div>
 
       {/* Profile Pic */}
       <div className="flex flex-col items-center">
-        <div className="relative w-24 h-24 rounded-full border-2 border-dashed bg-gray-50 flex items-center justify-center overflow-hidden">
+       <div className='relative'>
+         <div className="relative w-24 h-24 rounded-full border-2 border-dashed bg-gray-50 flex items-center justify-center overflow-hidden">
           {profileImage ? <img src={profileImage} alt="Profile" className="w-full h-full object-cover" /> : <User size={40} className="text-slate-300" />}
-          <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 bg-sky-600 text-white rounded-full p-1.5"><Camera size={14} /></button>
         </div>
+          <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 bg-sky-600 text-white rounded-full p-1.5"><Camera size={14} /></button>
+       </div>
         <input type="file" ref={fileInputRef} hidden onChange={(e) => handleFileChange(e, true)} />
       </div>
 
@@ -134,11 +140,11 @@ export default function PersonalStep({ onNext, data }) {
       </div>
 
       {/* Certificate Upload for Agents */}
-     {accountType === 'agent' && (  <label className="text-sm font-semibold flex items-center gap-2">
+     {/* {accountType === 'agent' && (  <label className="text-sm font-semibold flex items-center gap-2">
           Pera Certificate <span className="text-gray-400 font-normal text-xs">(Optional)</span>
         </label>
      )
-     }
+     } */}
      {accountType === 'agent' && (
   <div className="space-y-2">
     <label className="text-sm font-semibold">RERA Certificate (Optional)</label>
