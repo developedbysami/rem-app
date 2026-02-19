@@ -76,6 +76,32 @@ const Page = () => {
           </div>
         ))}
       </div>
+      {/* Progress Bar Section */}
+      <div className="mb-8 max-w-4xl mx-auto">
+        <div className="flex justify-between text-sm mb-3">
+          <span className="font-bold text-gray-800">
+            {progressPercentage}% Complete{" "}
+            <span className="font-normal text-gray-500 ml-1">
+              You're doing great! 🔥
+            </span>
+          </span>
+          <span className="text-gray-400 text-xs italic font-medium">
+            Step {currentStep} of {steps.length} →
+          </span>
+        </div>
+
+        {/* Progress Bar Container */}
+        <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden shadow-inner">
+          <div
+            className="h-full transition-all duration-700 ease-in-out rounded-full"
+            style={{
+              width: `${progressPercentage}%`,
+              background:
+                "linear-gradient(90deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)",
+            }}
+          />
+        </div>
+      </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto">
         {currentStep === 1 && <PersonalStep onNext={handleNextStep} data={formData} />}
