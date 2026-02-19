@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { User, Building2, Camera, FileText, Ticket, Upload } from 'lucide-react'; // Added Ticket icon
+import { User, Building2, Camera, FileText, Ticket, Upload, X, CheckCircle2, FileImage } from 'lucide-react'; // Added Ticket icon
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -145,48 +145,76 @@ export default function PersonalStep({ onNext, data }) {
         </label>
      )
      } */}
-     {accountType === 'agent' && (
-  <div className="space-y-2">
-    <label className="text-sm font-semibold">RERA Certificate (Optional)</label>
-    <div 
-      onClick={() => certInputRef.current?.click()} 
-      className="border-2 border-dashed border-gray-300 rounded-xl p-10 flex flex-col items-center justify-center bg-gray-50/50 cursor-pointer hover:bg-gray-50 hover:border-[#0081C9] transition-all group"
-    >
-      {/* Upload Icon */}
-      <div className="mb-4 text-gray-400 group-hover:text-[#0081C9] transition-colors">
-        <Upload size={40} strokeWidth={1.5} />
-      </div>
+  {accountType === 'agent' && (
+  <div className="space-y-4">
+    <label className="text-sm font-semibold text-gray-700">RERA Certificate (Optional)</label>
+    
+    {/* Upload Box: Show only if no certificate is selected */}
+    {!certificate ? (
+      <div 
+        onClick={() => certInputRef.current?.click()} 
+        className="border-2 border-dashed border-gray-300 rounded-2xl p-10 flex flex-col items-center justify-center bg-gray-50/50 cursor-pointer hover:bg-gray-50 hover:border-[#0081C9] transition-all group"
+      >
+        <div className="mb-4 text-gray-400 group-hover:text-[#0081C9] transition-colors">
+          <Upload size={40} strokeWidth={1.5} />
+        </div>
 
-      {/* Main Text */}
-      <div className="text-sm md:text-base text-center">
-        <span className="text-[#0081C9] font-semibold hover:underline">
-          {certificate ? "Change certificate" : "Click to upload"}
-        </span>
-        <span className="text-gray-600"> or drag and drop</span>
-      </div>
+        <div className="text-sm md:text-base text-center">
+          <span className="text-[#0081C9] font-semibold hover:underline">Click to upload</span>
+          <span className="text-gray-600"> or drag and drop</span>
+        </div>
 
-      {/* File Info / Constraints */}
-      <div className="text-xs text-gray-400 mt-2 uppercase tracking-wide text-center">
-        {certificate ? (
-          <span className="text-green-600 font-medium normal-case">
-            Selected: {certificate.name}
-          </span>
-        ) : (
-          "PDF, DOC, DOCX, JPG, PNG (MAX. 10MB)"
-        )}
+        <div className="text-xs text-gray-400 mt-2 uppercase tracking-wide text-center">
+          PDF, DOC, DOCX, JPG, PNG (MAX. 10MB)
+        </div>
       </div>
+    ) : (
+      /* Selected File Preview - Matches image_2dee06.png */
+      <div className="flex items-center justify-between p-4 bg-emerald-50 border border-emerald-100 rounded-xl animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="flex items-center gap-4">
+          {/* File Icon with background */}
+          <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center text-emerald-600 shadow-sm">
+            <FileImage size={24} />
+          </div>
+          
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-bold text-emerald-900 truncate max-w-[200px]">
+                {certificate.name}
+              </span>
+              <CheckCircle2 size={18} className="text-emerald-500" />
+            </div>
+            <span className="text-xs text-emerald-600 font-medium">
+              {(certificate.size / (1024 * 1024)).toFixed(2)} MB
+            </span>
+          </div>
+        </div>
 
-      {/* Hidden Input - Logic kept from your original */}
-      <input 
-        type="file" 
-        ref={certInputRef} 
-        className="hidden" 
-        onChange={(e) => handleFileChange(e, false)} 
-        accept=".pdf,.doc,.docx,.jpg,.png"
-      />
-    </div>
+        {/* Remove Button */}
+        <button 
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setCertificate(null); // Assuming you have a setter for your certificate state
+          }}
+          className="p-1 hover:bg-emerald-100 rounded-full text-emerald-600 transition-colors"
+        >
+          <X size={20} />
+        </button>
+      </div>
+    )}
+
+    {/* Hidden Input */}
+    <input 
+      type="file" 
+      ref={certInputRef} 
+      className="hidden" 
+      onChange={(e) => handleFileChange(e, false)} 
+      accept=".pdf,.doc,.docx,.jpg,.png"
+    />
   </div>
 )}
+
 
       <div className="flex justify-end mt-12 pt-6 border-t">
         <button type="submit" className="bg-[#0081C9] hover:bg-[#006da8] text-white px-10 py-2.5 rounded-lg font-bold shadow-md transition-all active:scale-95">
