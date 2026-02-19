@@ -81,7 +81,7 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
             {...register('email')}
             type="email" 
             placeholder="e.g., hello@example.com" 
-            className={`w-full p-3 border rounded-lg bg-gray-50 outline-none transition-all ${
+            className={`w-full p-2 border rounded-lg bg-gray-50 outline-none transition-all ${
               errors.email ? 'border-red-300' : 'focus:border-[#0081C9]'
             }`}
           />
@@ -96,7 +96,7 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
               {...register('password')}
               type={showPass ? "text" : "password"} 
               placeholder="Enter a strong password" 
-              className={`w-full p-3 border rounded-lg bg-gray-50 outline-none pr-10 transition-all ${
+              className={`w-full p-2 border rounded-lg bg-gray-50 outline-none pr-10 transition-all ${
                 errors.password ? 'border-red-300' : 'focus:border-[#0081C9]'
               }`} 
             />
@@ -111,9 +111,9 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
 
           {/* Password Requirements Checklist */}
           <div className="mt-4 space-y-2">
-            <p className="text-xs font-semibold text-gray-500">Password Requirements:</p>
+            <p className="text-xs font-semibold text-gray-00">Password Requirements:</p>
             {requirements.map((req, i) => (
-              <div key={i} className={`flex items-center text-xs transition-colors ${req.met ? 'text-green-600' : 'text-gray-400'}`}>
+              <div key={i} className={`flex items-center text-xs transition-colors ${req.met ? 'text-green-600' : 'text-gray-600'}`}>
                 <div className={`w-4 h-4 border rounded-full mr-2 flex items-center justify-center transition-all ${
                   req.met ? 'bg-green-500 border-green-500 text-white' : 'border-gray-300'
                 }`}>
@@ -137,7 +137,7 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
               {...register('confirmPassword')}
               type={showConfirmPass ? "text" : "password"} 
               placeholder="Re-enter your password" 
-              className={`w-full p-3 border rounded-lg bg-gray-50 outline-none transition-all ${
+              className={`w-full p-2 border rounded-lg bg-gray-50 outline-none transition-all ${
                 errors.confirmPassword ? 'border-red-300' : 'focus:border-[#0081C9]'
               }`} 
             />
