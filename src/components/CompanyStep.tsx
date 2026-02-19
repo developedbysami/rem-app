@@ -75,6 +75,31 @@ export const CompanyStep = ({ onNext, onPrev, data }) => {
         <input {...register("website")} placeholder="Company Website" className="w-full p-3 border rounded-lg bg-gray-50" />
         <input {...register("address")} placeholder="Address" className="w-full p-3 border rounded-lg bg-gray-50" />
 
+
+
+        <div className="grid grid-cols-2 gap-3 mb-3">
+             <input type="text" placeholder="e.g., New York" className="p-3 border rounded-lg bg-gray-50" />
+             <input type="text" placeholder="e.g., NY" className="p-3 border rounded-lg bg-gray-50" />
+          </div>
+
+
+ <div className="grid grid-cols-2 gap-3">
+             <input type="text" placeholder="e.g., 10001" className="p-3 border rounded-lg bg-gray-50" />
+             <select className="p-3 border rounded-lg bg-gray-50">
+               <option value="US">United States</option>
+  <option value="CA">Canada</option>
+  <option value="GB">United Kingdom</option>
+  <option value="AU">Australia</option>
+  <option value="DE">Germany</option>
+  <option value="FR">France</option>
+  <option value="Other">Other</option>
+             </select>
+          </div>
+
+
+
+
+
         <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50 cursor-pointer hover:border-blue-400">
           <div className="flex justify-center"><Upload size={30} color="gray"/></div>
           <div className="text-blue-500 font-semibold">{fileName || "Click to upload Company License *"}</div>
