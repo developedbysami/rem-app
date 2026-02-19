@@ -8,7 +8,6 @@ export const ReviewStep = ({ onPrev, data }) => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  // Helper to convert Base64 strings back to File objects for backend
   const b64ToFile = (base64String: string, filename: string) => {
     if (!base64String) return null;
     const arr = base64String.split(',');
@@ -20,35 +19,73 @@ export const ReviewStep = ({ onPrev, data }) => {
     return new File([u8arr], filename, { type: mime });
   };
 
+
+const summaryData = [
+  { 
+    label: 'Plan:', 
+    value: 'Free Plan', 
+    color: 'text-green-500 font-semibold' // Overrides the default black text
+  },
+  { 
+    label: 'Account Type:', 
+    value: data.accountType === 'company' ? 'Real Estate Company' : 'Individual Agent' 
+  },
+  { 
+    label: 'Name:', 
+    value: `${data.firstName} ${data.lastName}` 
+  },
+  { 
+    label: 'Email:', 
+    value: data.email 
+  },
+  // We use the spread operator to only show company fields if it's a company
+  ...(data.accountType === 'company' ? [
+    { label: 'Company:', value: data.companyName },
+    { label: 'Industry:', value: data.industry }
+  ] : [])
+];
+
+
   const handleComplete = async () => {
     setLoading(true);
     const fd = new FormData();
 
-    // Mapping fields to match your Backend Model
+    // 1. Shared Fields (Common to both Agent and Company models)
     fd.append('firstName', data.firstName);
     fd.append('lastName', data.lastName);
     fd.append('phoneNumber', data.phoneNumber);
-    fd.append('phoneDialCode', data.phoneDialCode || '+1'); // Ensure this isn't empty
+    fd.append('phoneDialCode', data.phoneDialCode || '+1'); // Critical for schema
+    fd.append('countryCode', data.countryCode || 'US');     // Critical for schema
     fd.append('email', data.email);
     fd.append('password', data.password);
-    fd.append('role', data.userRole); // admin, agent, manager, or director
-    fd.append('is_company', data.accountType === 'company' ? '1' : '0');
+    fd.append('role', data.userRole.toLowerCase()); // admin, agent, manager, or director
     fd.append('referalCode', data.referralCode || '');
+    
+    // 2. The Switch (Tells the backend which collection to use)
+    const isCompany = data.accountType === 'company' ? '1' : '0';
+    fd.append('is_company', isCompany);
 
+    // 3. Model Specific Logic
     if (data.accountType === 'company') {
+      // Company specific fields
       fd.append('companyName', data.companyName);
       fd.append('companySize', data.companySize);
-      fd.append('industry', data.industry); // real_estate, etc.
+      fd.append('industry', data.industry);
       fd.append('companyWebsite', data.website || '');
-      fd.append('companyAddress', data.address || '');
+      
+      const fullAddress = `${data.address || ''}, ${data.city || ''}, ${data.state || ''} ${data.zip || ''}, ${data.country || ''}`.trim();
+      fd.append('companyAddress', fullAddress);
       
       const lic = b64ToFile(data.companyLicense, 'license.png');
       if (lic) fd.append('companyLicense', lic);
     } else {
-      const cert = b64ToFile(data.certificate?.data, 'certificate.png');
+      // Agent specific fields (Individual Agent)
+      // MATCHES: reraCertificate in agentSchema
+      const cert = b64ToFile(data.certificate?.data, data.certificate?.name || 'certificate.png');
       if (cert) fd.append('reraCertificate', cert);
     }
 
+    // 4. Shared Profile Photo
     const pPhoto = b64ToFile(data.profileImage, 'profile.png');
     if (pPhoto) fd.append('profilePhoto', pPhoto);
 
@@ -58,26 +95,19 @@ export const ReviewStep = ({ onPrev, data }) => {
       });
 
       if (response.data.success) {
-        alert("Account created successfully!");
-        router.push('/login');
+        alert(data.accountType === 'company' ? "Company registered!" : "Agent registered!");
+        console.log(fd)
+        // router.push('/login');
       }
     } catch (error: any) {
       console.error(error.response?.data);
-      alert(error.response?.data?.message || "Signup failed. Please check your data.");
+      alert(error.response?.data?.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const summaryData = [
-    { label: 'Plan:', value: 'Free Plan (You can upgrade after login)', color: 'text-green-500 font-semibold' },
-    { label: 'Account Type:', value: data.accountType === 'company' ? 'Real Estate Company' : 'Individual Agent' },
-    { label: 'Name:', value: `${data.firstName} ${data.lastName}` },
-    { label: 'Email:', value: data.email },
-    { label: 'Role:', value: data.userRole },
-    { label: 'Phone:', value: data.phoneNumber },
-    ...(data.accountType === 'company' ? [{ label: 'Company:', value: data.companyName }] : []),
-  ];
+  // ... UI remains the same ...
 
   return (
     <div className="animate-in fade-in duration-500">
