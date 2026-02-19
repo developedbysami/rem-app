@@ -48,11 +48,18 @@ export const CompanyStep = ({ onNext, onPrev, data }) => {
       <div className="text-center mb-8"><h2 className="text-xl font-bold">Company Information</h2></div>
 
       <div className="space-y-4">
-        <input {...register("companyName")} placeholder="Company Name *" className="w-full p-3 border rounded-lg bg-gray-50" />
+        <label className="text-sm font-semibold">Company Name 
+            <span className='inline-block ml-1 text-red-500'>*</span>
+          </label>
+        <input {...register("companyName")} placeholder="E.g., Acme Real Estate LLC" className="w-full input p-3 border rounded-lg bg-gray-50" />
         
+        <label className="text-sm font-semibold">Company Size 
+            <span className='inline-block ml-1 text-red-500'>*</span>
+          </label>
         <div className="grid grid-cols-2 gap-4">
-          <select {...register("companySize")} className="w-full p-3 border rounded-lg bg-gray-50">
-            <option value="">Select size *</option>
+           
+          <select {...register("companySize")} className="w-full input p-3 border rounded-lg bg-gray-50">
+            <option value="">Select Company Size</option>
             <option value="1-10">1-10 employees</option>
             <option value="11-50">11-50 employees</option>
             <option value="51-200">51-200 employees</option>
@@ -60,8 +67,9 @@ export const CompanyStep = ({ onNext, onPrev, data }) => {
             <option value="500+">500+ employees</option>
           </select>
 
-          <select {...register("industry")} className="w-full p-3 border rounded-lg bg-gray-50">
-            <option value="">Select industry *</option>
+   
+          <select {...register("industry")} className="w-full input p-3 border rounded-lg bg-gray-50">
+            <option value="">Select industry </option>
             <option value="real_estate">Real Estate</option>
             <option value="property_management">Property Management</option>
             <option value="construction">Construction</option>
@@ -71,21 +79,26 @@ export const CompanyStep = ({ onNext, onPrev, data }) => {
             <option value="other">Other</option>
           </select>
         </div>
-
-        <input {...register("website")} placeholder="Company Website" className="w-full p-3 border rounded-lg bg-gray-50" />
-        <input {...register("address")} placeholder="Address" className="w-full p-3 border rounded-lg bg-gray-50" />
+<label className="text-sm font-semibold flex items-center gap-2">
+          Company Website <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+        </label>
+        <input {...register("website")} placeholder="Company Website" className="w-full input p-3 border rounded-lg bg-gray-50" />
+        <label className="text-sm font-semibold flex items-center gap-2">
+          Company Address <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+        </label>
+        <input {...register("address")} placeholder="Address" className="w-full input p-3 border rounded-lg bg-gray-50" />
 
 
 
         <div className="grid grid-cols-2 gap-3 mb-3">
-             <input type="text" placeholder="e.g., New York" className="p-3 border rounded-lg bg-gray-50" />
-             <input type="text" placeholder="e.g., NY" className="p-3 border rounded-lg bg-gray-50" />
+             <input type="text" placeholder="e.g., New York" className="input p-3 border rounded-lg bg-gray-50" />
+             <input type="text" placeholder="e.g., NY" className="input p-3 border rounded-lg bg-gray-50" />
           </div>
 
 
  <div className="grid grid-cols-2 gap-3">
-             <input type="text" placeholder="e.g., 10001" className="p-3 border rounded-lg bg-gray-50" />
-             <select className="p-3 border rounded-lg bg-gray-50">
+             <input type="text" placeholder="e.g., 10001" className="input p-3 border rounded-lg bg-gray-50" />
+             <select className="input p-3 border rounded-lg bg-gray-50">
                <option value="US">United States</option>
   <option value="CA">Canada</option>
   <option value="GB">United Kingdom</option>
@@ -99,12 +112,42 @@ export const CompanyStep = ({ onNext, onPrev, data }) => {
 
 
 
+<label className="text-sm font-semibold flex items-center gap-2">
+          Company License <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+        </label>
+        <div 
+  onClick={() => fileInputRef.current?.click()} 
+  className="border-2 border-dashed border-gray-300 rounded-xl p-10 flex flex-col items-center justify-center bg-gray-50/50 cursor-pointer hover:bg-gray-50 hover:border-[#0081C9] transition-all group"
+>
+  {/* Upload Icon */}
+  <div className="mb-4 text-gray-400 group-hover:text-[#0081C9] transition-colors">
+    <Upload size={40} strokeWidth={1.5} />
+  </div>
 
-        <div onClick={() => fileInputRef.current?.click()} className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center bg-gray-50 cursor-pointer hover:border-blue-400">
-          <div className="flex justify-center"><Upload size={30} color="gray"/></div>
-          <div className="text-blue-500 font-semibold">{fileName || "Click to upload Company License *"}</div>
-          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFile} />
-        </div>
+  {/* Main Text */}
+  <div className="text-sm md:text-base">
+    <span className="text-[#0081C9] font-semibold hover:underline">Click to upload</span>
+    <span className="text-gray-600"> or drag and drop</span>
+  </div>
+
+  {/* File Info / Constraints */}
+  <div className="text-xs text-gray-400 mt-2 uppercase tracking-wide">
+    {fileName ? (
+      <span className="text-green-600 font-medium">Selected: {fileName}</span>
+    ) : (
+      "PDF, DOC, DOCX, JPG, PNG (MAX. 10MB)"
+    )}
+  </div>
+
+  {/* Hidden Input */}
+  <input 
+    type="file" 
+    ref={fileInputRef} 
+    className="hidden" 
+    onChange={handleFile} 
+    accept=".pdf,.doc,.docx,.jpg,.png"
+  />
+</div>
       </div>
 
       <div className="flex justify-between mt-10">
