@@ -23,8 +23,8 @@ export const ReviewStep = ({ onPrev, data }) => {
 const summaryData = [
   { 
     label: 'Plan:', 
-    value: 'Free Plan', 
-    color: 'text-green-500 font-semibold' // Overrides the default black text
+    value: 'Free Plan (you can upgrade after login)', 
+    color: 'text-green-600 font-semibold' // Overrides the default black text
   },
   { 
     label: 'Account Type:', 
@@ -97,7 +97,7 @@ const summaryData = [
       if (response.data.success) {
         alert(data.accountType === 'company' ? "Company registered!" : "Agent registered!");
         console.log(fd)
-        // router.push('/login');
+        router.push('/login');
       }
     } catch (error: any) {
       console.error(error.response?.data);
