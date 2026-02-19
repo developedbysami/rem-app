@@ -8,7 +8,7 @@ const PhoneInputField = ({ name, control, errors, label = "Phone Number *" }) =>
   return (
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-gray-700">
-        {label}
+        Phone Number <span className='inline-block ml-1 text-red-500'>*</span>
       </label>
       
       <Controller
