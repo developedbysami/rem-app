@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
-import { User, Building2, Camera, ChevronDown, FileText, UploadCloud, X } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { User, Building2, Camera, FileText, Ticket, Upload } from 'lucide-react'; // Added Ticket icon
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import PhoneInputField from '@/constants/PhoneInputField';
 
+// Schema remains the same (referralCode is already optional here)
 const personalSchema = z.object({
   firstName: z.string().min(2, 'First name required'),
   lastName: z.string().min(2, 'Last name required'),
@@ -25,7 +26,7 @@ export default function PersonalStep({ onNext, data }) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const certInputRef = useRef<HTMLInputElement>(null);
 
-  const { register, handleSubmit, control, watch, formState: { errors } } = useForm({
+  const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(personalSchema),
     mode: 'onChange',
     defaultValues: {
@@ -75,48 +76,116 @@ export default function PersonalStep({ onNext, data }) {
       {/* Profile Pic */}
       <div className="flex flex-col items-center">
         <div className="relative w-24 h-24 rounded-full border-2 border-dashed bg-gray-50 flex items-center justify-center overflow-hidden">
-          {profileImage ? <img src={profileImage} className="w-full h-full object-cover" /> : <User size={40} className="text-slate-300" />}
+          {profileImage ? <img src={profileImage} alt="Profile" className="w-full h-full object-cover" /> : <User size={40} className="text-slate-300" />}
           <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 bg-sky-600 text-white rounded-full p-1.5"><Camera size={14} /></button>
         </div>
         <input type="file" ref={fileInputRef} hidden onChange={(e) => handleFileChange(e, true)} />
       </div>
 
+      {/* Name Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold">First Name *</label>
-          <input {...register('firstName')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="First Name" />
+          <label className="text-sm font-semibold">First Name 
+            <span className='inline-block ml-1 text-red-500'>*</span>
+          </label>
+          <input {...register('firstName')} className="input w-full p-3 border rounded-lg focus:border-sky-400 outline-none transition-all" placeholder="First Name" />
+          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName.message?.toString()}</p>}
         </div>
         <div className="space-y-1.5">
-          <label className="text-sm font-semibold">Last Name *</label>
-          <input {...register('lastName')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="Last Name" />
+          <label className="text-sm font-semibold">Last Name 
+            <span className='inline-block ml-1 text-red-500'>*</span>
+          </label>
+          <input {...register('lastName')} className="input w-full p-3 border rounded-lg focus:border-sky-400 outline-none transition-all" placeholder="Last Name" />
+          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName.message?.toString()}</p>}
         </div>
       </div>
 
+      {/* Phone Input */}
       <PhoneInputField name="phoneNumber" control={control} errors={errors} />
 
+      {/* --- NEW: Referral Code Input --- */}
       <div className="space-y-1.5">
-        <label className="text-sm font-semibold">User Role *</label>
-        <select {...register('userRole')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none">
+        <label className="text-sm font-semibold flex items-center gap-2">
+          Referral Code <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+        </label>
+        <div className="relative">
+         
+          <input 
+            {...register('referralCode')} 
+            className="input w-full p-3 border rounded-lg focus:border-sky-400 outline-none transition-all" 
+            placeholder="Referral code (optional)" 
+          />
+        </div>
+      </div>
+
+      {/* User Role */}
+      <div className="space-y-1.5">
+        <label className="text-sm font-semibold">User Role 
+          <span className='inline-block ml-1 text-red-500'>*</span>
+        </label>
+        <select {...register('userRole')} className="input w-full p-3 border rounded-lg focus:border-sky-400 outline-none bg-white">
           <option value="">Select your role</option>
           <option value="admin">Admin</option>
           <option value="agent">Agent</option>
           <option value="manager">Manager</option>
           <option value="director">Director</option>
         </select>
+        {errors.userRole && <p className="text-red-500 text-xs mt-1">{errors.userRole.message?.toString()}</p>}
       </div>
 
-      {accountType === 'agent' && (
-        <div onClick={() => certInputRef.current?.click()} className="border-2 border-dashed rounded-xl p-4 flex items-center justify-between cursor-pointer bg-slate-50">
-          <div className="flex items-center space-x-3">
-            <div className="p-2 bg-slate-200 rounded-lg text-slate-500"><FileText size={20} /></div>
-            <div><p className="text-sm font-medium">{certificate ? certificate.name : 'Upload Certification'}</p></div>
-          </div>
-          <input type="file" ref={certInputRef} hidden onChange={(e) => handleFileChange(e, false)} />
-        </div>
-      )}
+      {/* Certificate Upload for Agents */}
+     {accountType === 'agent' && (  <label className="text-sm font-semibold flex items-center gap-2">
+          Pera Certificate <span className="text-gray-400 font-normal text-xs">(Optional)</span>
+        </label>
+     )
+     }
+     {accountType === 'agent' && (
+  <div className="space-y-2">
+    <label className="text-sm font-semibold">RERA Certificate (Optional)</label>
+    <div 
+      onClick={() => certInputRef.current?.click()} 
+      className="border-2 border-dashed border-gray-300 rounded-xl p-10 flex flex-col items-center justify-center bg-gray-50/50 cursor-pointer hover:bg-gray-50 hover:border-[#0081C9] transition-all group"
+    >
+      {/* Upload Icon */}
+      <div className="mb-4 text-gray-400 group-hover:text-[#0081C9] transition-colors">
+        <Upload size={40} strokeWidth={1.5} />
+      </div>
+
+      {/* Main Text */}
+      <div className="text-sm md:text-base text-center">
+        <span className="text-[#0081C9] font-semibold hover:underline">
+          {certificate ? "Change certificate" : "Click to upload"}
+        </span>
+        <span className="text-gray-600"> or drag and drop</span>
+      </div>
+
+      {/* File Info / Constraints */}
+      <div className="text-xs text-gray-400 mt-2 uppercase tracking-wide text-center">
+        {certificate ? (
+          <span className="text-green-600 font-medium normal-case">
+            Selected: {certificate.name}
+          </span>
+        ) : (
+          "PDF, DOC, DOCX, JPG, PNG (MAX. 10MB)"
+        )}
+      </div>
+
+      {/* Hidden Input - Logic kept from your original */}
+      <input 
+        type="file" 
+        ref={certInputRef} 
+        className="hidden" 
+        onChange={(e) => handleFileChange(e, false)} 
+        accept=".pdf,.doc,.docx,.jpg,.png"
+      />
+    </div>
+  </div>
+)}
 
       <div className="flex justify-end mt-12 pt-6 border-t">
-        <button type="submit" className="bg-[#0081C9] text-white px-10 py-2.5 rounded-lg font-bold shadow-md">Next →</button>
+        <button type="submit" className="bg-[#0081C9] hover:bg-[#006da8] text-white px-10 py-2.5 rounded-lg font-bold shadow-md transition-all active:scale-95">
+          Next →
+        </button>
       </div>
     </form>
   );
