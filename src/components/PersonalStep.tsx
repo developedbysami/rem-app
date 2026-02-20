@@ -91,26 +91,28 @@ export default function PersonalStep({ onNext, data, onAccountTypeChange }) {
 
       {/* Profile Pic */}
      <div className="flex flex-col items-center">
-       <div className='relative'>
-         <div className="relative w-24 h-24 rounded-full border-2 border-dashed bg-gray-50 flex items-center justify-center overflow-hidden">
+       <div className='relative group'>
+         <div className="relative w-24 h-24 rounded-full border-2 border-dashed border-gray-300 group-hover:border-gray-400 bg-gray-100 flex items-center justify-center overflow-hidden">
           {profileImage ? <img src={profileImage} alt="Profile" className="w-full h-full object-cover" /> : <User size={40} className="text-slate-300" />}
         </div>
           <button type="button" onClick={() => fileInputRef.current?.click()} className="absolute bottom-1 right-1 bg-sky-600 text-white rounded-full p-1.5"><Camera size={14} /></button>
        </div>
         <input type="file" ref={fileInputRef} hidden onChange={(e) => handleFileChange(e, true)} />
+        <p className='text-sm text-gray-600'>Profile Photo (Optional)</p>
+        <span className='text-xs text-gray-500'>PNG, JPG only up to 10MB. Professional headshot recommended.</span>
       </div>
 
       {/* Name Fields */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1.5">
           <label className="text-sm font-semibold">First Name <span className='text-red-500'>*</span></label>
-          <input {...register('firstName')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="First Name" />
-          {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName.message?.toString()}</p>}
+          <input {...register('firstName')} className="input p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="First Name" />
+          {errors.firstName && <p className="text-red-500 text-sm mt-1">{errors.firstName.message?.toString()}</p>}
         </div>
         <div className="space-y-1.5">
           <label className="text-sm font-semibold">Last Name <span className='text-red-500'>*</span></label>
-          <input {...register('lastName')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="Last Name" />
-          {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName.message?.toString()}</p>}
+          <input {...register('lastName')} className="input p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="Last Name" />
+          {errors.lastName && <p className="text-red-500 text-sm mt-1">{errors.lastName.message?.toString()}</p>}
         </div>
       </div>
 
@@ -121,20 +123,20 @@ export default function PersonalStep({ onNext, data, onAccountTypeChange }) {
       {/* Referral Code */}
       <div className="space-y-1.5">
         <label className="text-sm font-semibold">Referral Code <span className="text-gray-400 font-normal text-xs">(Optional)</span></label>
-        <input {...register('referralCode')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="Referral code" />
+        <input {...register('referralCode')} className="input p-3 border rounded-lg focus:border-sky-400 outline-none" placeholder="Referral code" />
       </div>
 
       {/* User Role */}
       <div className="space-y-1.5">
         <label className="text-sm font-semibold">User Role <span className='text-red-500'>*</span></label>
-        <select {...register('userRole')} className="w-full p-3 border rounded-lg focus:border-sky-400 outline-none bg-white">
+        <select {...register('userRole')} className="input p-3 border rounded-lg focus:border-sky-400 outline-none bg-white">
           <option value="">Select your role</option>
           <option value="admin">Admin</option>
           <option value="agent">Agent</option>
           <option value="manager">Manager</option>
           <option value="director">Director</option>
         </select>
-        {errors.userRole && <p className="text-red-500 text-xs mt-1">{errors.userRole.message?.toString()}</p>}
+        {errors.userRole && <p className="text-red-500 text-sm mt-1">{errors.userRole.message?.toString()}</p>}
       </div>
 
       {/* Certificate Upload for Agents */}
@@ -169,7 +171,7 @@ export default function PersonalStep({ onNext, data, onAccountTypeChange }) {
         </div>
       )}
 
-      <div className="flex justify-end mt-12 pt-6 border-t">
+      <div className="flex justify-end mt-12 pt-6 border-t border-gray-300">
         <button type="submit" className="bg-[#0081C9] hover:bg-[#006da8] text-white px-10 py-2.5 rounded-lg font-bold shadow-md transition-all active:scale-95">Next →</button>
       </div>
     </form>
