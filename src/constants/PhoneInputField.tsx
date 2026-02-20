@@ -8,31 +8,31 @@ const PhoneInputField = ({ name, control, errors, label = "Phone Number *" }) =>
   return (
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-gray-700">
-        Phone Number <span className='inline-block ml-1 text-red-500'>*</span>
+        {label}
       </label>
-      
-      <Controller
-        name={name}
-        control={control}
-        render={({ field }) => (
-          <div className={`flex items-center border rounded-lg bg-white overflow-visible transition-all duration-200 ${
-            errors[name] 
-              ? 'border-red-500 ring-2 ring-red-50' 
-              : 'focus-within:border-sky-400 focus-within:ring-4 focus-within:ring-sky-50 border-slate-200'
-          }`}>
-            <PhoneInput
-              {...field}
-              international
-              defaultCountry="AE"
-              placeholder="Enter phone number"
-              countrySelectComponent={CountrySelector}
-              // This removes default styles and lets our wrapper handle the design
-              className="flex-1 px-1 phone-input-container"
-              inputComponent={CustomInput}
-            />
-          </div>
-        )}
+    
+  
+<Controller
+  name={name}
+  control={control}
+  render={({ field: { onChange, value } }) => (
+    <div className={`flex items-center border rounded-lg bg-white transition-all ${
+      errors[name] ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-200 focus-within:border-sky-400'
+    }`}>
+      <PhoneInput
+        value={value || ""} // Forces a string even if empty
+        onChange={(val) => onChange(val || "")} // Sends "" instead of undefined
+        defaultCountry="AE"
+        international={false} // <--- Explicitly false to hide country code in input
+        displayInitialValueAsLocalNumber // <--- Shows "50..." instead of "+97150..."
+        countrySelectComponent={CountrySelector}
+        inputComponent={CustomInput}
+        placeholder="Enter phone number"
+        className="flex-1 px-1"
       />
+    </div>
+  )}
+/>
 
       {errors[name] && (
         <p className="text-[10px] text-red-500 font-medium pl-1 italic">
