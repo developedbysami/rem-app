@@ -14,7 +14,8 @@ const credentialsSchema = z.object({
     .min(8, 'Password must be at least 8 characters')
     .regex(/[A-Z]/, 'Must contain one uppercase letter')
     .regex(/[a-z]/, 'Must contain one lowercase letter')
-    .regex(/[0-9]/, 'Must contain one number'),
+    .regex(/[0-9]/, 'Must contain one number')
+    .regex(/[@$!%*?&]/, 'Must contain one special character (e.g., @, $, !)') , // Added this line
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -48,20 +49,22 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
   const password = watch('password', '');
   const confirmPassword = watch('confirmPassword', '');
 
-  const validations = useMemo(() => ({
-    length: password.length >= 8,
-    uppercase: /[A-Z]/.test(password),
-    lowercase: /[a-z]/.test(password),
-    number: /[0-9]/.test(password),
-    match: password === confirmPassword && password !== '',
-  }), [password, confirmPassword]);
+ const validations = useMemo(() => ({
+  length: password.length >= 8,
+  uppercase: /[A-Z]/.test(password),
+  lowercase: /[a-z]/.test(password),
+  number: /[0-9]/.test(password),
+  special: /[@$!%*?&]/.test(password), // Added special character check
+  match: password === confirmPassword && password !== '',
+}), [password, confirmPassword]);
 
-  const requirements = [
-    { label: 'At least 8 characters long', met: validations.length },
-    { label: 'One uppercase letter (A-Z)', met: validations.uppercase },
-    { label: 'One lowercase letter (a-z)', met: validations.lowercase },
-    { label: 'One number (0-9)', met: validations.number },
-  ];
+const requirements = [
+  { label: 'At least 8 characters long', met: validations.length },
+  { label: 'One uppercase letter (A-Z)', met: validations.uppercase },
+  { label: 'One lowercase letter (a-z)', met: validations.lowercase },
+  { label: 'One number (0-9)', met: validations.number },
+  { label: 'Special characters recommended (!@#$%^&*)', met: validations.special },
+];
 
   return (
     <form 
@@ -85,7 +88,7 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
               errors.email ? 'border-red-300' : 'focus:border-[#0081C9]'
             }`}
           />
-          {errors.email && <p className="text-[10px] text-red-500 mt-1 pl-1">{errors.email.message}</p>}
+          {errors.email && <p className="text-sm  text-red-500 mt-1 pl-1">{errors.email.message}</p>}
         </div>
 
         {/* Password Field */}
@@ -150,7 +153,7 @@ export const CredentialsStep = ({ onNext, onPrev, data }) => {
             </button>
           </div>
           {errors.confirmPassword && (
-            <p className="text-[10px] text-red-500 mt-1 pl-1">{errors.confirmPassword.message}</p>
+            <p className="text-sm text-red-500 mt-1 pl-1">{errors.confirmPassword.message}</p>
           )}
         </div>
       </div>
