@@ -115,18 +115,8 @@ const Page = () => {
 
       {/* Progress Bar */}
       <div className="mb-8 max-w-4xl mx-auto">
-        <div className="flex justify-between text-sm mb-3">
-          <span className="font-bold text-gray-800">
-            {progressPercentage}% Complete{" "}
-            <span className="font-normal text-gray-500 ml-1">
-              {progressPercentage === 100 ? "Ready to go! 🚀" : "Almost there! 🔥"}
-            </span>
-          </span>
-          <span className="text-gray-400 text-xs italic font-medium">
-            Step {activeIndex + 1} of {activeSteps.length}
-          </span>
-        </div>
-        <div className="w-full bg-gray-100 h-3 rounded-full overflow-hidden shadow-inner">
+       
+        <div className="w-full bg-gray-100 h-4 rounded-full overflow-hidden shadow-inner">
           <div
             className="h-full transition-all duration-700 ease-in-out rounded-full"
             style={{
@@ -134,6 +124,17 @@ const Page = () => {
               background: "linear-gradient(90deg, #0ea5e9 0%, #0284c7 50%, #0369a1 100%)",
             }}
           />
+        </div>
+         <div className="flex justify-between text-sm my-3">
+          <span className="font-semibold text-gray-800">
+            {progressPercentage}% Complete{" "}
+            <span className="font-normal text-gray-500 ml-1">
+              {progressPercentage === 100 ? "Almost there! 🔥": "Let's get started! 🚀" }
+            </span>
+          </span>
+          <span className="text-gray-400 text-xs font-medium">
+            Step {activeIndex + 1} of {activeSteps.length}
+          </span>
         </div>
       </div>
 
