@@ -27,7 +27,7 @@ const PhoneInputField = ({ name, control, errors, label = "Phone Number *" }) =>
         displayInitialValueAsLocalNumber // <--- Shows "50..." instead of "+97150..."
         countrySelectComponent={CountrySelector}
         inputComponent={CustomInput}
-        placeholder="Enter phone number"
+        placeholder="e.g., 1234567890"
         className="flex-1 px-1"
       />
     </div>
