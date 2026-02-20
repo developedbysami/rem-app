@@ -6,9 +6,16 @@ import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
 
-export const ReviewStep = ({ onPrev, data }) => {
+export const ReviewStep = ({ onPrev, data }: { onPrev: () => void; data: any }) => {
   const [loading, setLoading] = useState(false);
+  // New states for checkboxes
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [agreedToMarketing, setAgreedToMarketing] = useState(false);
+  
   const router = useRouter();
+
+  // Helper to determine if the user can proceed
+  const isFormValid = agreedToTerms && agreedToMarketing && !loading;
 
   const b64ToFile = (base64String: string, filename: string) => {
     if (!base64String) return null;
@@ -21,55 +28,50 @@ export const ReviewStep = ({ onPrev, data }) => {
     return new File([u8arr], filename, { type: mime });
   };
 
-
-const summaryData = [
-  { 
-    label: 'Plan:', 
-    value: 'Free Plan (you can upgrade after login)', 
-    color: 'text-green-600 font-semibold' // Overrides the default black text
-  },
-  { 
-    label: 'Account Type:', 
-    value: data.accountType === 'company' ? 'Real Estate Company' : 'Individual Agent' 
-  },
-  { 
-    label: 'Name:', 
-    value: `${data.firstName} ${data.lastName}` 
-  },
-  { 
-    label: 'Email:', 
-    value: data.email 
-  },
-  // We use the spread operator to only show company fields if it's a company
-  ...(data.accountType === 'company' ? [
-    { label: 'Company:', value: data.companyName },
-    { label: 'Industry:', value: data.industry }
-  ] : [])
-];
-
+  const summaryData = [
+    { 
+      label: 'Plan:', 
+      value: 'Free Plan (you can upgrade after login)', 
+      color: 'text-green-600 font-semibold' 
+    },
+    { 
+      label: 'Account Type:', 
+      value: data.accountType === 'company' ? 'Real Estate Company' : 'Individual Agent' 
+    },
+    { 
+      label: 'Name:', 
+      value: `${data.firstName} ${data.lastName}` 
+    },
+    { 
+      label: 'Email:', 
+      value: data.email 
+    },
+    ...(data.accountType === 'company' ? [
+      { label: 'Company:', value: data.companyName },
+      { label: 'Industry:', value: data.industry }
+    ] : [])
+  ];
 
   const handleComplete = async () => {
+    if (!isFormValid) return;
+
     setLoading(true);
     const fd = new FormData();
 
-    // 1. Shared Fields (Common to both Agent and Company models)
     fd.append('firstName', data.firstName);
     fd.append('lastName', data.lastName);
     fd.append('phoneNumber', data.phoneNumber);
-    fd.append('phoneDialCode', data.phoneDialCode || '+1'); // Critical for schema
-    fd.append('countryCode', data.countryCode || 'US');     // Critical for schema
+    fd.append('phoneDialCode', data.phoneDialCode || '+1');
+    fd.append('countryCode', data.countryCode || 'US');
     fd.append('email', data.email);
     fd.append('password', data.password);
-    fd.append('role', data.userRole.toLowerCase()); // admin, agent, manager, or director
+    fd.append('role', data.userRole.toLowerCase());
     fd.append('referalCode', data.referralCode || '');
     
-    // 2. The Switch (Tells the backend which collection to use)
     const isCompany = data.accountType === 'company' ? '1' : '0';
     fd.append('is_company', isCompany);
 
-    // 3. Model Specific Logic
     if (data.accountType === 'company') {
-      // Company specific fields
       fd.append('companyName', data.companyName);
       fd.append('companySize', data.companySize);
       fd.append('industry', data.industry);
@@ -81,13 +83,10 @@ const summaryData = [
       const lic = b64ToFile(data.companyLicense, 'license.png');
       if (lic) fd.append('companyLicense', lic);
     } else {
-      // Agent specific fields (Individual Agent)
-      // MATCHES: reraCertificate in agentSchema
       const cert = b64ToFile(data.certificate?.data, data.certificate?.name || 'certificate.png');
       if (cert) fd.append('reraCertificate', cert);
     }
 
-    // 4. Shared Profile Photo
     const pPhoto = b64ToFile(data.profileImage, 'profile.png');
     if (pPhoto) fd.append('profilePhoto', pPhoto);
 
@@ -98,7 +97,6 @@ const summaryData = [
 
       if (response.data.success) {
         alert(data.accountType === 'company' ? "Company registered!" : "Agent registered!");
-        console.log(fd)
         router.push('/login');
       }
     } catch (error: any) {
@@ -108,8 +106,6 @@ const summaryData = [
       setLoading(false);
     }
   };
-
-  // ... UI remains the same ...
 
   return (
     <div className="animate-in fade-in duration-500">
@@ -129,51 +125,71 @@ const summaryData = [
         </div>
       </div>
 
-     <div className="space-y-4 py-4">
-  {/* 1. Terms of Service Checkbox */}
-  <label className="flex items-start gap-3 cursor-default">
-    <div className="flex-shrink-0 mt-0.5">
-      <input
-        type="checkbox"
-        checked
-        readOnly
-        className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-default"
-      />
-    </div>
-    <p className="text-sm text-gray-700 leading-tight">
-      I agree to the{' '}
-      <Link href="/terms" className="text-[#0081C9] hover:underline">
-        Terms of Service
-      </Link>{' '}
-      and{' '}
-      <Link href="/privacy" className="text-[#0081C9] hover:underline">
-        Privacy Policy
-      </Link>
-    </p>
-  </label>
+      <div className="space-y-4 py-4">
+        {/* 1. Terms of Service Checkbox */}
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className="flex-shrink-0 mt-0.5">
+            <input
+              type="checkbox"
+              checked={agreedToTerms}
+              onChange={(e) => setAgreedToTerms(e.target.checked)}
+              className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-pointer"
+            />
+          </div>
+          <p className="text-sm text-gray-700 leading-tight">
+            I agree to the{' '}
+            <Link href="/terms" className="text-[#0081C9] hover:underline font-medium">
+              Terms of Service
+            </Link>{' '}
+            and{' '}
+            <Link href="/privacy" className="text-[#0081C9] hover:underline font-medium">
+              Privacy Policy
+            </Link>
+          </p>
+        </label>
 
-  {/* 2. Marketing Communications Checkbox */}
-  <label className="flex items-start gap-3 cursor-default">
-    <div className="flex-shrink-0 mt-0.5">
-      <input
-        type="checkbox"
-        readOnly
-        className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-default"
-      />
-    </div>
-    <p className="text-sm text-gray-700 leading-tight">
-      I would like to receive updates and marketing communications about REM CRM
-    </p>
-  </label>
-</div>
+        {/* 2. Marketing Communications Checkbox */}
+        <label className="flex items-center gap-3 cursor-pointer group">
+          <div className="flex-shrink-0 mt-0.5">
+            <input
+              type="checkbox"
+              checked={agreedToMarketing}
+              onChange={(e) => setAgreedToMarketing(e.target.checked)}
+              className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-pointer"
+            />
+          </div>
+          <p className="text-sm text-gray-700 leading-tight">
+            I would like to receive updates and marketing communications about REM CRM
+          </p>
+        </label>
+      </div>
 
       <div className="flex justify-between mt-10">
-        <button onClick={onPrev} disabled={loading} className="text-gray-500 hover:text-gray-700 font-medium transition-colors">← Previous</button>
-        <button onClick={handleComplete} disabled={loading} className="bg-[#0081C9] hover:bg-[#006da8] text-white px-8 py-2.5 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 flex items-center gap-2"> 
-
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check w-4 h-4 mr-2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
-
-          {loading ? "Registering..." : "Create Account"}
+        <button 
+          onClick={onPrev} 
+          disabled={loading} 
+          className="text-gray-500 hover:text-gray-700 font-medium transition-colors disabled:opacity-50"
+        >
+          ← Previous
+        </button>
+        
+        <button 
+          onClick={handleComplete} 
+          disabled={!isFormValid} 
+          className={`
+            bg-[#0081C9] hover:bg-[#006da8] text-white px-8 py-2.5 rounded-lg font-bold text-sm shadow-md 
+            transition-all active:scale-95 flex items-center gap-2 
+            disabled:opacity-50 disabled:grayscale disabled:cursor-not-allowed
+          `}
+        > 
+          {loading ? (
+            "Registering..."
+          ) : (
+            <>
+              <Check className="w-4 h-4" />
+              Create Account
+            </>
+          )}
         </button>
       </div>
     </div>
