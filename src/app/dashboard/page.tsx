@@ -68,11 +68,11 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="min-h-screen p-4 md:p-8">
-      <div className="max-w-2xl mx-auto">
+    <div className="min-h-screen p-4 md:p-8 w-full">
+      <div className="max-w-xl mx-auto w-full">
         
         {/* Profile Card */}
-        <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="bg-white w-full rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
           
           {/* Header Banner */}
           <div className="h-32 bg-gradient-to-r from-blue-600 to-sky-400" />
@@ -98,18 +98,18 @@ export default function ProfilePage() {
             </div>
 
             {/* Data Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4">
+            <div className="w-full">
+              <div className="mx-auto p-4 rounded-2xl bg-slate-50 border border-slate-100 flex justify-center items-center gap-4">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
                   <Mail size={20} />
                 </div>
-                <div>
+                <div className="">
                   <p className="text-xs text-slate-400 font-bold uppercase">Email Address</p>
                   <p className="text-sm font-semibold text-slate-700">{userData?.email}</p>
                 </div>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4">
+              {/* <div className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-center gap-4">
                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center text-slate-400 shadow-sm">
                   <ShieldCheck size={20} />
                 </div>
@@ -119,7 +119,7 @@ export default function ProfilePage() {
                     {userData?.isVerified ? "Verified Account" : "Pending Verification"}
                   </p>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Actions */}
