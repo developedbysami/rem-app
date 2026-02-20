@@ -36,22 +36,46 @@ const Page = () => {
     password: '',
   });
 
-  const allSteps = [
-    { id: 1, title: 'Personal', component: PersonalStep },
-    { id: 2, title: 'Company', component: CompanyStep },
-    { id: 3, title: 'Credentials', component: CredentialsStep },
-    { id: 4, title: 'Complete', component: ReviewStep },
-  ];
 
-  // Dynamically filter steps based on accountType
+   // steps
+  const allSteps = [
+    { 
+      id: 1, 
+      title: 'Personal', 
+      description: 'We need some basic personal information to create your professional CRM profile',
+      component: PersonalStep 
+    },
+    { 
+      id: 2, 
+      title: 'Company', 
+      description: 'Help us understand your business so we can tailor REM CRM to your real estate needs', // Added
+      component: CompanyStep 
+    },
+    { 
+      id: 3, 
+      title: 'Credentials', 
+      description: 'Create secure login credentials for your REM CRM account', // Added
+      component: CredentialsStep 
+    },
+    { 
+      id: 4, 
+      title: 'Complete', 
+      description: 'Almost done! Please review your information and complete your REM CRM registration', // Added
+      component: ReviewStep 
+    },
+  ];
+// ...
+  
+
+  // Dynamically filter steps based on accountType 'agent' | 'company'
   const activeSteps = useMemo(() => {
     if (formData.accountType === 'agent') {
-      return allSteps.filter((step) => step.id !== 2);
+      return allSteps.filter((step) => step.id !== 2); // return all the steps except step-2 
     }
     return allSteps;
   }, [formData.accountType]);
 
-  // IMMEDIATELY update account type to trigger re-calculation of progress
+  // IMMEDIATE update 
   const handleAccountTypeChange = (type: 'company' | 'agent') => {
     setFormData((prev) => ({ ...prev, accountType: type }));
   };
@@ -89,29 +113,40 @@ const Page = () => {
       </div>
 
       {/* Step Indicators */}
-      <div className="flex justify-between items-start mb-12 relative max-w-5xl mx-auto px-4">
-        {activeSteps.map((step, index) => (
-          <div key={step.id} className="flex flex-col items-center flex-1 relative">
-            {index !== 0 && (
-              <div 
-                className={`absolute top-5 right-[50%] left-[-50%] h-[2px] transition-colors duration-500 z-0 
-                ${currentStep >= step.id ? 'bg-[#0081C9]' : 'bg-gray-200'}`} 
-              />
-            )}
-            <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-[3px] mb-2 transition-all duration-300 font-bold 
-              ${currentStep === step.id 
-                ? 'bg-[#0081C9] border-[#BEE3F8] text-white shadow-[0_0_0_3px_rgba(190,227,248,0.5)]' 
-                : currentStep > step.id 
-                  ? 'bg-[#0081C9] border-[#0081C9] text-white' 
-                  : 'bg-gray-200 border-white text-gray-500'}`}>
-              {currentStep > step.id ? "✓" : index + 1}
-            </div>
-            <span className={`relative z-10 text-sm font-bold ${currentStep === step.id ? 'text-[#0081C9]' : 'text-gray-600'}`}>
-              {step.title}
-            </span>
-          </div>
-        ))}
+
+     <div className="flex justify-between items-start mb-12 relative max-w-5xl mx-auto px-4">
+  {activeSteps.map((step, index) => (
+    <div key={step.id} className="flex flex-col items-center flex-1 relative text-center">
+      {/* Connector Line */}
+      {index !== 0 && (
+        <div 
+          className={`absolute top-5 right-[50%] left-[-50%] h-[2px] transition-colors duration-500 z-0 
+          ${currentStep >= step.id ? 'bg-[#0081C9]' : 'bg-gray-200'}`} 
+        />
+      )}
+
+      {/* Circle Icon */}
+      <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-[3px] mb-2 transition-all duration-300 font-bold 
+        ${currentStep === step.id 
+          ? 'bg-[#0081C9] border-[#BEE3F8] text-white shadow-[0_0_0_3px_rgba(190,227,248,0.5)]' 
+          : currentStep > step.id 
+            ? 'bg-[#0081C9] border-[#0081C9] text-white' 
+            : 'bg-gray-200 border-white text-gray-500'}`}>
+        {currentStep > step.id ? "✓" : index + 1}
       </div>
+
+      {/* Main Title */}
+      <span className={`relative z-10 text-sm font-bold block ${currentStep === step.id ? 'text-[#0081C9]' : 'text-gray-600'}`}>
+        {step.title}
+      </span>
+
+      {/* Description Text (Added this part) */}
+      <p className="text-xs text-gray-400 mt-1 hidden md:block w-55">
+        {step.description || "Step details here"}
+      </p>
+    </div>
+  ))}
+</div>
 
       {/* Progress Bar */}
       <div className="mb-8 max-w-4xl mx-auto">
