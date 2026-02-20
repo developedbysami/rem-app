@@ -129,44 +129,49 @@ const summaryData = [
         </div>
       </div>
 
-      <div className="space-y-4 py-4">
-      {/* 1. Terms of Service Checkbox */}
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
-          <div className="w-5 h-5 bg-[#0081C9] rounded-md flex items-center justify-center text-white cursor-pointer transition-colors">
-            <Check size={14} strokeWidth={3} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-700 leading-tight">
-          I agree to the{' '}
-          <Link href="/terms" className="text-[#0081C9] hover:underline">
-            Terms of Service
-          </Link>{' '}
-          and{' '}
-          <Link href="/privacy" className="text-[#0081C9] hover:underline">
-            Privacy Policy
-          </Link>
-        </p>
-      </div>
-
-      {/* 2. Marketing Communications Checkbox */}
-      <div className="flex items-start gap-3">
-        <div className="flex-shrink-0 mt-0.5">
-          <div className="w-5 h-5 bg-[#0081C9] rounded-md flex items-center justify-center text-white cursor-pointer transition-colors">
-            <Check size={14} strokeWidth={3} />
-          </div>
-        </div>
-        <p className="text-sm text-gray-700 leading-tight">
-          I would like to receive updates and marketing communications about REM CRM
-        </p>
-      </div>
+     <div className="space-y-4 py-4">
+  {/* 1. Terms of Service Checkbox */}
+  <label className="flex items-start gap-3 cursor-default">
+    <div className="flex-shrink-0 mt-0.5">
+      <input
+        type="checkbox"
+        checked
+        readOnly
+        className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-default"
+      />
     </div>
+    <p className="text-sm text-gray-700 leading-tight">
+      I agree to the{' '}
+      <Link href="/terms" className="text-[#0081C9] hover:underline">
+        Terms of Service
+      </Link>{' '}
+      and{' '}
+      <Link href="/privacy" className="text-[#0081C9] hover:underline">
+        Privacy Policy
+      </Link>
+    </p>
+  </label>
+
+  {/* 2. Marketing Communications Checkbox */}
+  <label className="flex items-start gap-3 cursor-default">
+    <div className="flex-shrink-0 mt-0.5">
+      <input
+        type="checkbox"
+        readOnly
+        className="w-5 h-5 rounded border-gray-300 text-[#0081C9] accent-[#0081C9] cursor-default"
+      />
+    </div>
+    <p className="text-sm text-gray-700 leading-tight">
+      I would like to receive updates and marketing communications about REM CRM
+    </p>
+  </label>
+</div>
 
       <div className="flex justify-between mt-10">
         <button onClick={onPrev} disabled={loading} className="text-gray-500 hover:text-gray-700 font-medium transition-colors">← Previous</button>
         <button onClick={handleComplete} disabled={loading} className="bg-[#0081C9] hover:bg-[#006da8] text-white px-8 py-2.5 rounded-lg font-bold text-sm shadow-md transition-all active:scale-95 flex items-center gap-2"> 
 
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check w-4 h-4 mr-2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-check w-4 h-4 mr-2" aria-hidden="true"><path d="M20 6 9 17l-5-5"></path></svg>
 
           {loading ? "Registering..." : "Create Account"}
         </button>
