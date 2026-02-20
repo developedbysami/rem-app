@@ -10,8 +10,12 @@ import PhoneInputField from '@/constants/PhoneInputField';
 const personalSchema = z.object({
   firstName: z.string().min(2, 'First name required'),
   lastName: z.string().min(2, 'Last name required'),
-  phoneNumber: z.string().min(10, 'Valid phone number required'),
-  referalCode: z.string().optional(),
+  // use .catch("") or .default("") if you want to be extra safe
+  phoneNumber: z.string({
+    required_error: "Phone number is required",
+    invalid_type_error: "Phone number must be a string",
+  }).min(10, 'Valid phone number required'),
+  referralCode: z.string().optional(),
   userRole: z.enum(['admin', 'agent', 'manager', 'director'], {
     errorMap: () => ({ message: 'Please select a valid user role' }),
   }),
@@ -25,16 +29,18 @@ export default function PersonalStep({ onNext, data, onAccountTypeChange }) {
   const certInputRef = useRef<HTMLInputElement>(null);
 
   const { register, handleSubmit, control, formState: { errors } } = useForm({
-    resolver: zodResolver(personalSchema),
-    mode: 'onChange',
-    defaultValues: {
-      firstName: data.firstName,
-      lastName: data.lastName,
-      phoneNumber: data.phoneNumber,
-      referralCode: data.referralCode,
-      userRole: data.userRole,
-    },
-  });
+  resolver: zodResolver(personalSchema),
+  mode: 'onChange',
+  defaultValues: {
+    firstName: data.firstName || "",
+    lastName: data.lastName || "",
+    phoneNumber: data.phoneNumber || "", // Ensure this is never undefined
+    referalCode: data.referralCode || "",
+    userRole: data.userRole || "",
+  },
+});
+
+
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, isProfile: boolean) => {
     const file = e.target.files?.[0];
@@ -110,6 +116,7 @@ export default function PersonalStep({ onNext, data, onAccountTypeChange }) {
 
       {/* Phone Input */}
       <PhoneInputField name="phoneNumber" control={control} errors={errors} />
+      
 
       {/* Referral Code */}
       <div className="space-y-1.5">
