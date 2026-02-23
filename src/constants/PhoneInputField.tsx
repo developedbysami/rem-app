@@ -3,12 +3,15 @@ import { Controller } from 'react-hook-form';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import CountrySelector from './CountrySelector';
+import flags from 'react-phone-number-input/flags';
 
-const PhoneInputField = ({ name, control, errors, label = "Phone Number *" }) => {
+const PhoneInputField = ({ name, control, errors, label = "Phone Number " }) => {
   return (
     <div className="space-y-1.5">
       <label className="block text-sm font-semibold text-gray-700">
         {label}
+       <span className="text-red-500">*</span>
+
       </label>
     
   
@@ -20,15 +23,16 @@ const PhoneInputField = ({ name, control, errors, label = "Phone Number *" }) =>
       errors[name] ? 'border-red-500 ring-2 ring-red-50' : 'border-slate-200 focus-within:border-sky-400'
     }`}>
       <PhoneInput
-        value={value || ""} // Forces a string even if empty
-        onChange={(val) => onChange(val || "")} // Sends "" instead of undefined
+        value={value || ""} 
+        onChange={(val) => onChange(val || "")} 
         defaultCountry="AE"
-        international={false} // <--- Explicitly false to hide country code in input
-        displayInitialValueAsLocalNumber // <--- Shows "50..." instead of "+97150..."
+        international={false} 
+        // flags={flags}
+        displayInitialValueAsLocalNumber 
         countrySelectComponent={CountrySelector}
         inputComponent={CustomInput}
         placeholder="e.g., 1234567890"
-        className="flex-1 px-1"
+        className="flex-1 "
       />
     </div>
   )}

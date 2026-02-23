@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { getCountries, getCountryCallingCode } from 'react-phone-number-input';
 import en from 'react-phone-number-input/locale/en';
+// 1. Import the flags object
+import flags from 'react-phone-number-input/flags';
 
-// Constant for all country codes and names
 const COUNTRY_LIST = getCountries().map((country) => ({
   code: country,
   name: en[country],
@@ -14,7 +15,6 @@ const CountrySelector = ({ value, onChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -32,6 +32,12 @@ const CountrySelector = ({ value, onChange }) => {
   );
 
   const selectedCountry = COUNTRY_LIST.find((c) => c.code === value);
+  
+  // 2. Helper to render the flag component
+  const FlagIcon = ({ countryCode }) => {
+    const Flag = flags[countryCode];
+    return Flag ? <Flag title={countryCode} /> : <span className="w-5 h-3 bg-gray-200" />;
+  };
 
   return (
     <div className="relative h-full" ref={dropdownRef}>
@@ -39,9 +45,13 @@ const CountrySelector = ({ value, onChange }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 h-full border-r border-slate-200 min-w-[80px]"
+        className="rounded-l-lg flex items-center gap-2 px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 h-full border-r border-slate-200 min-w-[100px]"
       >
-        <span className="text-gray-900 font-semibold">{selectedCountry?.callingCode || "+1"}</span>
+        {/* 3. Render Flag in Trigger */}
+        <div className="w-5 flex-shrink-0 shadow-sm border border-gray-100 overflow-hidden rounded-sm">
+           <FlagIcon countryCode={value || 'AE'} />
+        </div>
+        <span className="text-gray-900 font-semibold">{selectedCountry?.callingCode || "+971"}</span>
         <svg className={`w-3 h-3 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
         </svg>
@@ -67,13 +77,18 @@ const CountrySelector = ({ value, onChange }) => {
                 <button
                   key={country.code}
                   type="button"
-                  className="w-full flex items-center px-4 py-3 text-sm hover:bg-sky-50/50 transition-colors border-b border-slate-50 last:border-0"
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-sky-50/50 transition-colors border-b border-slate-50 last:border-0"
                   onClick={() => {
                     onChange(country.code);
                     setIsOpen(false);
                     setSearch("");
                   }}
                 >
+                  {/* 4. Render Flag in List */}
+                  <div className="w-6 flex-shrink-0 shadow-sm border border-gray-50 overflow-hidden rounded-sm">
+                    <FlagIcon countryCode={country.code} />
+                  </div>
+                  
                   <span className="font-bold text-gray-800 w-12 text-left">{country.callingCode}</span>
                   <span className="text-gray-600 truncate">{country.name}</span>
                 </button>

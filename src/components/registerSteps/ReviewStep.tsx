@@ -5,8 +5,10 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { Check } from 'lucide-react';
 import Link from 'next/link';
+import { apiRequest } from '@/apis/apis';
+import { ReviewStepProps } from '@/types';
 
-export const ReviewStep = ({ onPrev, data }: { onPrev: () => void; data: any }) => {
+export const ReviewStep = ({ onPrev, data }: ReviewStepProps) => {
   const [loading, setLoading] = useState(false);
   // New states for checkboxes
   const [agreedToTerms, setAgreedToTerms] = useState(false);
@@ -66,7 +68,7 @@ export const ReviewStep = ({ onPrev, data }: { onPrev: () => void; data: any }) 
     fd.append('email', data.email);
     fd.append('password', data.password);
     fd.append('role', data.userRole.toLowerCase());
-    fd.append('referalCode', data.referralCode || '');
+    fd.append('referalCode', data.referalCode || '');
     
     const isCompany = data.accountType === 'company' ? '1' : '0';
     fd.append('is_company', isCompany);
@@ -91,11 +93,9 @@ export const ReviewStep = ({ onPrev, data }: { onPrev: () => void; data: any }) 
     if (pPhoto) fd.append('profilePhoto', pPhoto);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/v1/auth/signup', fd, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
+      const response = await apiRequest('POST', '/auth/signup', fd);
 
-      if (response.data.success) {
+      if (response.success) {
         alert(data.accountType === 'company' ? "Company registered!" : "Agent registered!");
         router.push('/login');
       }

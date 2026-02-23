@@ -5,26 +5,13 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
+import { CredentialsFormData, credentialsSchema } from '@/schemas/authSchema';
+import { CredentialsStepProps } from '@/types';
 
-// Logic from Version 1: 8 chars min + specific regex
-const credentialsSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  password: z
-    .string()
-    .min(8, 'Password must be at least 8 characters')
-    .regex(/[A-Z]/, 'Must contain one uppercase letter')
-    .regex(/[a-z]/, 'Must contain one lowercase letter')
-    .regex(/[0-9]/, 'Must contain one number')
-    .regex(/[@$!%*?&]/, 'Must contain one special character (e.g., @, $, !)') , // Added this line
-  confirmPassword: z.string(),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
 
-type CredentialsFormData = z.infer<typeof credentialsSchema>;
 
-export const CredentialsStep = ({ onNext, onPrev, data }) => {
+
+export const CredentialsStep = ({ onNext, onPrev, data }: CredentialsStepProps) => {
   const [showPass, setShowPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
 
