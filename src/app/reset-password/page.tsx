@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Eye, EyeOff, CheckCircle2, Lock, AlertCircle } from "lucide-react";
 import axios from "axios";
+import { apiRequest } from "@/apis/apis";
 
 // 1. Validation Schema
 const resetPasswordSchema = z.object({
@@ -68,13 +69,13 @@ function ResetPasswordForm() {
 
     try {
       // 3. Sending all required fields to backend
-      const response = await axios.post("http://localhost:5000/api/v1/password/reset", {
-        token: token,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      });
+     const response = await apiRequest('POST', '/password/reset', {
+      token: token, // The token usually comes from the URL params
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    });
 
-      if (response.data.success) {
+      if (response.success) {
         setIsSuccess(true);
         // Redirect to login after 3 seconds
         setTimeout(() => router.push("/login"), 3000);
