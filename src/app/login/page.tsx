@@ -4,18 +4,11 @@ import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
-import axios from "axios";
+import { apiRequest } from "@/apis/apis";
+import { LoginFormData, loginSchema } from "@/schemas/authSchema";
 
-// 1. Zod schema for validation
-const loginSchema = z.object({
-  email: z.string().email("Enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-  rememberMe: z.boolean().optional(),
-});
-
-type LoginFormData = z.infer<typeof loginSchema>;
 
 export default function LoginForm() {
   const router = useRouter();
@@ -34,27 +27,34 @@ export default function LoginForm() {
     }
   });
 
-  // 2. The Logic: Handling the Sign In
+ 
   const onSubmit = async (data: LoginFormData) => {
     setServerError(null); // Reset errors
 
     try {
-      // Replace with your actual backend URL
-      const response = await axios.post("http://localhost:5000/api/v1/auth/signin", {
-        email: data.email,
-        password: data.password,
-      });
+  
+     const response = await apiRequest('POST', '/auth/signin', {
+      email: data.email,
+      password: data.password,
+    });
+    console.log("User Data:", response);
+    
+   
+    if (response.token) {
+      localStorage.setItem('token', response.token);
+      router.push("/dashboard");
+    }
 
-      if (response.data.success) {
-        // Store token for future requests
-        localStorage.setItem("token", response.data.token);
-        localStorage.setItem("user", JSON.stringify(response.data.data));
+      // if (response.data.success) {
+      //   // Store token for future requests
+      //   localStorage.setItem("token", response.data.token);
+      //   localStorage.setItem("user", JSON.stringify(response.data.data));
 
-        // Redirect user to dashboard
-        router.push("/dashboard");
-      }
+      //   // Redirect user to dashboard
+      //   router.push("/dashboard");
+      // }
+      
     } catch (error: any) {
-      // Capture backend error messages (e.g., "Invalid email or password")
       const message = error.response?.data?.message || "Something went wrong. Please try again.";
       setServerError(message);
     }
