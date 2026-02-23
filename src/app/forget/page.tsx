@@ -4,6 +4,7 @@ import Link from 'next/link';
 import React, { useState } from 'react';
 import { useForm } from "react-hook-form";
 import axios from 'axios';
+import { apiRequest } from '@/apis/apis';
 
 const ForgotPasswordPage = () => {
   const [isSuccess, setIsSuccess] = useState(false);
@@ -19,11 +20,12 @@ const ForgotPasswordPage = () => {
     setServerError("");
     try {
       // ── API Call to Backend ──
-      const response = await axios.post("http://localhost:5000/api/v1/password/forgot", {
-        email: data.email,
-      });
+     const response = await apiRequest('POST', '/password/forgot', {
+      email: data.email,
+    });
 
-      if (response.data.success) {
+
+      if (response.success) {
         setIsSuccess(true);
       }
     } catch (error: any) {
