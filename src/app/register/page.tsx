@@ -1,106 +1,23 @@
 'use client';
 
-import { CompanyStep } from '@/components/CompanyStep';
-import { CredentialsStep } from '@/components/CredentialsStep';
-import PersonalStep from '@/components/PersonalStep';
-import { ReviewStep } from '@/components/ReviewStep';
-import React, { useState, useMemo } from 'react';
+import React from 'react';
+import PersonalStep from '@/components/registerSteps/PersonalStep';
+import { CompanyStep } from '@/components/registerSteps/CompanyStep';
+import { CredentialsStep } from '@/components/registerSteps/CredentialsStep';
+import { ReviewStep } from '@/components/registerSteps/ReviewStep';
+import { useRegisterForm } from '@/hooks/useRegisterForm'; // Adjust path as needed
 
 const Page = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    // Personal Info
-    firstName: '',
-    lastName: '',
-    phoneNumber: '',
-    phoneDialCode: '',
-    countryCode: '',
-    referalCode: '',
-    userRole: '',
-    accountType: 'company', // Default 'company'
-    profileImage: null,
-    certificate: null,
-    // Company Info
-    companyName: '',
-    companySize: '',
-    industry: '',
-    website: '',
-    address: '',
-    city: '',
-    state: '',
-    zip: '',
-    country: 'US',
-    companyLicense: null,
-    // Credentials
-    email: '',
-    password: '',
-  });
-
-
-   // steps
-  const allSteps = [
-    { 
-      id: 1, 
-      title: 'Personal', 
-      description: 'We need some basic personal information to create your professional CRM profile',
-      component: PersonalStep 
-    },
-    { 
-      id: 2, 
-      title: 'Company', 
-      description: 'Help us understand your business so we can tailor REM CRM to your real estate needs', // Added
-      component: CompanyStep 
-    },
-    { 
-      id: 3, 
-      title: 'Credentials', 
-      description: 'Create secure login credentials for your REM CRM account', // Added
-      component: CredentialsStep 
-    },
-    { 
-      id: 4, 
-      title: 'Complete', 
-      description: 'Almost done! Please review your information and complete your REM CRM registration', // Added
-      component: ReviewStep 
-    },
-  ];
-// ...
-  
-
-  // Dynamically filter steps based on accountType 'agent' | 'company'
-  const activeSteps = useMemo(() => {
-    if (formData.accountType === 'agent') {
-      return allSteps.filter((step) => step.id !== 2); // return all the steps except step-2 
-    }
-    return allSteps;
-  }, [formData.accountType]);
-
-  // IMMEDIATE update 
-  const handleAccountTypeChange = (type: 'company' | 'agent') => {
-    setFormData((prev) => ({ ...prev, accountType: type }));
-  };
-
-  const handleNextStep = (stepData: any) => {
-    const updatedData = { ...formData, ...stepData };
-    setFormData(updatedData);
-
-    if (currentStep === 1 && updatedData.accountType === 'agent') {
-      setCurrentStep(3); // Jump to Credentials for Agents
-    } else {
-      setCurrentStep((prev) => prev + 1);
-    }
-  };
-
-  const handlePrevStep = () => {
-    if (currentStep === 3 && formData.accountType === 'agent') {
-      setCurrentStep(1); // Jump back to Personal for Agents
-    } else {
-      setCurrentStep((prev) => prev - 1);
-    }
-  };
-
-  const activeIndex = activeSteps.findIndex((s) => s.id === currentStep);
-  const progressPercentage = Math.round(((activeIndex + 1) / activeSteps.length) * 100);
+  const {
+    currentStep,
+    formData,
+    activeSteps,
+    activeIndex,
+    progressPercentage,
+    handleAccountTypeChange,
+    handleNextStep,
+    handlePrevStep,
+  } = useRegisterForm();
 
   return (
     <div className="max-w-5xl w-full space-y-8 mx-auto p-4">
@@ -113,44 +30,41 @@ const Page = () => {
       </div>
 
       {/* Step Indicators */}
+      <div className="flex justify-between items-start mb-12 relative max-w-5xl mx-auto px-4">
+        {activeSteps.map((step, index) => (
+          <div key={step.id} className="flex flex-col items-center flex-1 relative text-center">
+            {/* Connector Line */}
+            {index !== 0 && (
+              <div 
+                className={`absolute mx-10 top-5 right-[50%] left-[-50%] h-[2px] transition-colors duration-500 z-0 
+                ${currentStep >= step.id ? 'bg-[#0081C9]' : 'bg-gray-200'}`} 
+              />
+            )}
 
-     <div className="flex justify-between items-start mb-12 relative max-w-5xl mx-auto px-4">
-  {activeSteps.map((step, index) => (
-    <div key={step.id} className="flex flex-col items-center flex-1 relative text-center">
-      {/* Connector Line */}
-      {index !== 0 && (
-        <div 
-          className={`absolute top-5 right-[50%] left-[-50%] h-[2px] transition-colors duration-500 z-0 
-          ${currentStep >= step.id ? 'bg-[#0081C9]' : 'bg-gray-200'}`} 
-        />
-      )}
+            {/* Circle Icon */}
+            <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-[3px] mb-2 transition-all duration-300 font-bold 
+              ${currentStep === step.id 
+                ? 'bg-[#0081C9] border-[#BEE3F8] text-white shadow-[0_0_0_3px_rgba(190,227,248,0.5)]' 
+                : currentStep > step.id 
+                  ? 'bg-[#0081C9] border-[#0081C9] text-white' 
+                  : 'bg-gray-200 border-white text-gray-500'}`}>
+              {currentStep > step.id ? "✓" : index + 1}
+            </div>
 
-      {/* Circle Icon */}
-      <div className={`relative z-10 w-10 h-10 rounded-full flex items-center justify-center border-[3px] mb-2 transition-all duration-300 font-bold 
-        ${currentStep === step.id 
-          ? 'bg-[#0081C9] border-[#BEE3F8] text-white shadow-[0_0_0_3px_rgba(190,227,248,0.5)]' 
-          : currentStep > step.id 
-            ? 'bg-[#0081C9] border-[#0081C9] text-white' 
-            : 'bg-gray-200 border-white text-gray-500'}`}>
-        {currentStep > step.id ? "✓" : index + 1}
+            <span className={`relative z-10 text-sm font-bold block ${currentStep === step.id ? 'text-[#0081C9]' : 'text-gray-600'}`}>
+              {step.title}
+            </span>
+
+            <p className="text-xs text-gray-400 mt-1 hidden md:block w-55">
+              {step.description || "Step details here"}
+            </p>
+          </div>
+        ))}
       </div>
 
-      {/* Main Title */}
-      <span className={`relative z-10 text-sm font-bold block ${currentStep === step.id ? 'text-[#0081C9]' : 'text-gray-600'}`}>
-        {step.title}
-      </span>
-
-      {/* Description Text (Added this part) */}
-      <p className="text-xs text-gray-400 mt-1 hidden md:block w-55">
-        {step.description || "Step details here"}
-      </p>
-    </div>
-  ))}
-</div>
-
       {/* Progress Bar */}
-      <div className="mb-8 max-w-4xl mx-auto">
-       
+      <div className="mb-8 max-w-4xl mx-auto relative">
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white to-transparent opacity-20 animate-pulse"></div>
         <div className="w-full bg-gray-100 h-4 rounded-full overflow-hidden shadow-inner">
           <div
             className="h-full transition-all duration-700 ease-in-out rounded-full"
@@ -160,11 +74,11 @@ const Page = () => {
             }}
           />
         </div>
-         <div className="flex justify-between text-sm my-3">
+        <div className="flex justify-between text-sm my-3">
           <span className="font-semibold text-gray-800">
             {progressPercentage}% Complete{" "}
             <span className="font-normal text-gray-500 ml-1">
-              {progressPercentage === 100 ? "Almost there! 🔥": "Let's get started! 🚀" }
+              {progressPercentage === 100 ? "Almost there! 🔥" : "Let's get started! 🚀"}
             </span>
           </span>
           <span className="text-gray-400 text-xs font-medium">
@@ -173,6 +87,7 @@ const Page = () => {
         </div>
       </div>
 
+      {/* Step Content */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-8 max-w-4xl mx-auto min-h-[400px]">
         {currentStep === 1 && (
           <PersonalStep 
