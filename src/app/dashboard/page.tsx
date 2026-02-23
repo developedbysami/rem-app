@@ -18,6 +18,17 @@ export default function ProfilePage() {
   const [userData, setUserData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+
+// Inside your ProfilePage component
+useEffect(() => {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    router.push('/login');
+    return;
+  }
+  // fetch data...
+}, []);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       try {
